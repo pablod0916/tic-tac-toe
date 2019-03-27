@@ -86,6 +86,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         tvThinking = findViewById(R.id.tvThinking);
         btnTryAgain = findViewById(R.id.btnTryAgain);
 
+        /*The class Methods contains all the recurrent
+                methdos that I will use in the application*/
         Methods.setTextViewProperties(tvTitle, w(10), getResources().getColor(R.color.black), font, getString(R.string.tic_tac_toe_challenge), 0, 0, 0, h(1));
         Methods.setTextViewProperties(tvSubTitle, w(6), getResources().getColor(R.color.dark_gray), font, getString(R.string.message2), 0, 0, 0, h(7));
         Methods.setTextViewProperties(tvTurn, w(10), getResources().getColor(R.color.black), font, "", 0, h(7), 0, 0);
@@ -96,6 +98,7 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         btnTryAgain.setTextSize(TypedValue.COMPLEX_UNIT_PX, w(7));
         Methods.setMargenes(btnTryAgain,0,h(2),0,0);
 
+        /*The button Try Again only will be visible to the user when the game has been finished.*/
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,11 +108,13 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method just restarts the activity, to start a new game.*/
     private void tryAgain() {
         startActivity(new Intent(getApplicationContext(),TicTacToe.class));
         finish();
     }
 
+    /*In this method, it initializes all the views that allow the user to chose an option between X or O*/
     private void iniPlayerElection() {
 
         rlBlackShadow = findViewById(R.id.rlBlackShadow);
@@ -147,6 +152,7 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         rlPlayerOneElectionX.setOnClickListener(this);
     }
 
+    /*Initialization and properties of the views of the grid*/
     private void iniGrid() {
 
         RelativeLayout rlPos1 = findViewById(R.id.rlPos1);
@@ -193,6 +199,9 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*The tic tac toe game can be seen as a 3x3 matrix or as a 9-component array,
+    this method initializes that nine-component array, putting each of them empty
+    before the game starts*/
     private void iniMatriz() {
         arrayPos.add(new Position(imPos1, 0, EMPTY));
         arrayPos.add(new Position(imPos2, 1, EMPTY));
@@ -205,6 +214,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         arrayPos.add(new Position(imPos9, 8, EMPTY));
     }
 
+    /*The drawables utilized are built below,
+    to call them later without delay problems*/
     private void loadPieces() {
 
         ex1 = this.getResources().getDrawable(R.drawable.ic_ex1);
@@ -228,6 +239,7 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method listens to the user's interactions with their UI*/
     @Override
     public void onClick(View v) {
 
@@ -259,6 +271,9 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+
+    /*When de user chooses a piece to between X or O This method process that
+    information, and save the information into variables what will be used forward.*/
     private void choice(int i) {
 
         if (i == 1) {
@@ -276,7 +291,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
     }
 
     private void doValidation(int i) {
-        /*This validation is to make sure, the position selected is empty*/
+        /*This validation is to make sure, the position selected is empty,
+        the game is still active, and be the user's turn.*/
         if (arrayPos.get(i).getState().equals(EMPTY) && playAvailable && !gameOver) {
             changePositionState(i);
         }
@@ -296,23 +312,27 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
             changeCurrentTurn(player2.getId());
         }
 
-        /*After every move, the system has to make sure if there is a winner*/
         scannerWinner();
 
     }
 
+    /*After every move, the system has to make sure if there is a winner*/
     private void scannerWinner() {
 
         movementCont ++;
 
         String s = "";
 
+        /*This is for making sure which player just played (Person or Machine)*/
         if (player1.isCurrentTurn()) {
             s = player2.getExOrCircle();
         } else {
             s = player1.getExOrCircle();
         }
 
+        /*To make sure if any player won, I have to create a list of all possible combinations.
+        If one of these sets of positions have the same type
+        of figure (X or O) means that there is a winner*/
         String st1 = "0,1,2";
         String st2 = "3,4,5";
         String st3 = "6,7,8";
@@ -322,6 +342,10 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         String st7 = "0,4,8";
         String st8 = "2,4,6";
 
+
+        /*If the validations find a winner, it's shown the red line over those
+        three pieces and the system shows a message to the user, and the option
+        to play again*/
         if (scannerString(s, st1)) {
             int height = (int) (w(80) * 0.14375f);
             imLineWin.setImageBitmap(Methods.drawableToBitmap(lineHorizontal, w(80), height));
@@ -368,10 +392,9 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         }
     }
 
-    private void gameIsOver(String s) {
-
-        /*When the system found a winner provide
+    /*When the system found a winner provide
         the user the option to play again*/
+    private void gameIsOver(String s) {
 
         if(s.equals(player2.isCurrentTurn())){
             tvTurn.setText(R.string.you_win);
@@ -385,6 +408,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         gameOver = true;
     }
 
+    /*This method goes over the whole list of elements
+    looking for a coincidence with the "winner" strings*/
     private boolean scannerString(String s, String str) {
 
         int cont = 0;
@@ -403,6 +428,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method changes the turn (User, CPU, User),
+    taking into account that the user always will be the first in play.*/
     private void changeCurrentTurn(int id) {
 
         if (id == 1) {
@@ -422,11 +449,10 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
-    private void delay(int i) {
-
-        /*This delay tries to represent the machine is thinking its next
+    /*This delay tries to represent the machine is thinking its next
         key movement, it could take 500, 1000, 1500 milliseconds chosen
         randomly to seems more realistic.*/
+    private void delay(int i) {
 
         Runnable r = new Runnable() {
             @Override
@@ -451,10 +477,9 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
     }
 
 
-    private void artificialIntelligence() {
-
-        /*This is the algorithm created to
+    /*This is the algorithm created to
         make unbeatable the machine*/
+    private void artificialIntelligence() {
 
         boolean w = win();
         if (!w) {
@@ -466,8 +491,12 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*First of all the system has to find if
+    there is a possible move to win*/
     private boolean win() {
 
+        /*There is 3 types of win
+        Horizontal, vertical and diagonal*/
         int sh = scannerHorizontal(WIN);
         int sv = scannerVertical(WIN);
         int sd = scannerDiagonal(WIN);
@@ -487,8 +516,12 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*if it's not possible to win yet,
+    the system has to find a possible move to no loss.*/
     private boolean notLose() {
 
+        /*There is 3 types of win
+        Horizontal, vertical and diagonal*/
         int sh = scannerHorizontal(NO_LOSE);
         int sv = scannerVertical(NO_LOSE);
         int sd = scannerDiagonal(NO_LOSE);
@@ -508,6 +541,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method finds a position where the computer has played previously,
+    and also find randomly other available position to try win*/
     private void findNeighbor() {
 
         String s = player2.getExOrCircle();
@@ -543,6 +578,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method returns a set of possible neighbors
+    taking into account the position of the previews move*/
     private String getNeighbors(int id) {
 
         if (id == 0) {
@@ -568,6 +605,9 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         return "";
     }
 
+    /*This method is executed when the computer has to make its first move,
+    There is a combination of options to randomly take the best decision,
+    taking into account the user's first move.*/
     private void doFirstMovement() {
 
         String movPossible = "";
@@ -759,6 +799,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
 
     }
 
+    /*This method returns a different kind of piece (X or O)
+    drawable randomly for each move.*/
     private Drawable getDrawable(String str, int randon) {
         if (str.equals(EQUIS)) {
             if (randon == 1)
@@ -795,10 +837,12 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         return r.nextInt((max - min) + 1) + min;
     }
 
+    /*This method returns a percentage of the width screen size.*/
     public int w(float percent) {
         return (int) (widthScreen * (percent / 100));
     }
 
+    /*This method returns a percentage of the height screen size.*/
     public int h(float percent) {
         return (int) (heightScreen * (percent / 100));
     }
