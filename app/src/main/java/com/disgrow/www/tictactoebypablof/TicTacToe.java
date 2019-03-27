@@ -362,7 +362,8 @@ public class TicTacToe extends AppCompatActivity implements View.OnClickListener
         }else{
             if(movementCont == 9){
                 tvTurn.setText(R.string.tie_message);
-                tvThinking.setText(R.string.try_again);
+                tvThinking.setVisibility(View.GONE);
+                btnTryAgain.setVisibility(View.VISIBLE);
             }
         }
     }
